@@ -1,4 +1,6 @@
 /**
+ * version V1.2
+ * authoer dxz
  * 人力资源数据看板 js文件
  */
 layui.use('laydate', function(){
