@@ -1,6 +1,6 @@
 /**
  * version V1.2
- * authoer dxz
+ * author dxz
  * 人力资源数据看板 js文件
  */
 layui.use('laydate', function(){
@@ -29,10 +29,29 @@ layui.use('laydate', function(){
 	var app = {};
 	var total_container_option;
 	
+	var countData = [
+		{value: 3300, name: '自有员工'},
+		{value: 2287, name: 'A类派遣'},
+		{value: 1183, name: 'B类派遣'}
+	];
+	// 人数汇总
+	var totalCount =0;
+	for(var i = 0;i<countData.length;i++){
+		totalCount += countData[i].value;
+	}
 	total_container_option = {
 		title:{
-			text:'总体汇总',
-			left:'center'
+			text:'总人数',
+			textStyle:{
+				fontSize:20
+			},
+			left:'center',
+			subtext:totalCount,
+			x:'center',
+			y:'center',
+			subtextStyle:{
+				fontSize:18
+			}
 		},
 	    tooltip: {
 	        trigger: 'item',
@@ -79,13 +98,14 @@ layui.use('laydate', function(){
 	var myChart = echarts.init(unit_container_dom);
 	var app = {};
 	
-	var Their_own_emp = [241,143, 489, 234, 310, 144, 230,189,609,54];
-	var dispath_emp = [17,175, 438, 310, 294, 341, 607,542,447,184];
+	var Their_own_emp = [241,143, 489, 234, 310, 144, 230,189,609,120,54];
+	var dispath_emp = [17,175, 438, 310, 294, 341, 607,542,447,57,184];
+	var B_dispath_emp = [0,31,81,108, 130, 296, 157,205,186,0,0];
 	
 	var total_emps = function(){
 		var totals = [];
 		for(var i = 0;i<Their_own_emp.length;i++){
-			totals.push(Their_own_emp[i] + dispath_emp[i]);
+			totals.push(Their_own_emp[i] + dispath_emp[i] + B_dispath_emp[i]);
 		}
 		return totals;
 	}
@@ -102,12 +122,13 @@ layui.use('laydate', function(){
 	        }
 	    },
 	    legend: {
-	        data: ['自有员工', 'A类派遣']
+	        data: ['自有员工', 'A类派遣','B类派遣']
 	    },
 	    xAxis: {
 	        type: 'category',
 	        name:'分公司',
-	        data: ['公司总部','基础设施事业部', '西南分', '华东分', '山东分', '江苏分', '河南分','安徽分','南方分','安装分','菲律宾分'],
+	        data: ['公司总部','基础设施事业部', '西南分', '华东分', '山东分', 
+			'江苏分', '河南分','安徽分','南方分','安装分','菲律宾分'],
 			axisLabel:{
 				interval:0
 			}
@@ -116,7 +137,7 @@ layui.use('laydate', function(){
 			type: 'value',
 			name:'人数',
 			min:0,
-			max:1200,
+			max:1500,
 			interval: 50,
 	    },
 	    series: [
@@ -143,6 +164,18 @@ layui.use('laydate', function(){
 					focus: 'series'
 				},
 				data: dispath_emp
+			},
+			{
+				name: 'B类派遣',
+				type: 'bar',
+				stack: 'total',
+				label: {
+					show: true,
+				},
+				emphasis: {
+					focus: 'series'
+				},
+				data: B_dispath_emp
 			},
 	        {
 	              name: '总计',
@@ -180,6 +213,7 @@ layui.use('laydate', function(){
 	personsource_container_option = {
 	    title: {
 	        text: '人员来源',
+			subtext:'人数汇总：5470',
 	        left: 'center'
 	    },
 	    tooltip: {
@@ -199,7 +233,7 @@ layui.use('laydate', function(){
 				},
 	            name: '人员来源',
 	            type: 'pie',
-	            radius: '50%',
+	            radius: '60%',
 	            data: [
 	                {value: 1874, name: '社会招聘'},
 	                {value: 3596, name: '校园招聘'}
@@ -220,82 +254,122 @@ layui.use('laydate', function(){
 	var chartDom = document.getElementById('edu_container');
 	var myChart = echarts.init(chartDom);
 	var edu_option;
+	var firstEdu = [
+		{value: 548, name: '硕士研究生'},
+		{value: 2775, name: '大学本科'},
+		{value: 979, name: '大学专科'},
+		{value: 127, name: '中等专科'},
+		{value: 679, name: '其它'}
+	];
+		
+	var highEdu = [
+		{value: 0, name: '博士研究生'},
+		{value: 147, name: '硕士研究生'},
+		{value: 2875, name: '大学本科'},
+		{value: 1089, name: '大学专科'},
+		{value: 127, name: '中等专科'},
+		{value: 679, name: '其它'}
+	];
+	var schoolCategory = [
+			{value: 26, name: '双一流'},
+			{value: 478, name: '985'},
+			{value: 909, name: '211'},
+			{value: 89, name: '海外学校'},
+			{value: 4178, name: '其它'}
+	];
 	
 	edu_option = {
-		title:{
-			text:'学历情况'
+		title: [{
+		    text: '学历汇总',
+		    left: 'left',
+		}, {
+		    subtext: '第一学历统计',
+		    left: '15.67%',
+			top:'15%',
+		    textAlign: 'center',
+		    subtextStyle:{
+		        fontSize:16,
+		        color:'black'
+		    }
+		}, {
+		    subtext: '最高学历统计',
+		    left: '50%',
+			top:'15%',
+		    textAlign: 'center',
+		    subtextStyle:{
+		        fontSize:16,
+		        color:'black'
+		    }
+		}, {
+		    subtext: '院校类别统计',
+		    left: '83.33%',
+			top:'15%',
+		    textAlign: 'center',
+		    subtextStyle:{
+		        fontSize:16,
+		        color:'black'
+		    }
+		}],
+		tooltip: {
+		    trigger: 'item',
+			formatter: '{a} <br/>{b}: {c} ({d}%)'
 		},
-	    tooltip: {
-	        trigger: 'item',
-	        formatter: '{a} <br/>{b}: {c} ({d}%)'
-	    },
-	    legend: {
-	        data: ['硕士研究生','大学本科','大学专科'
-	        ,'中等专科','职业高中','技工学校','高中','初中','小学','其他','985','211','其它'],
-			top:-4
-	    },
-	    series: [
-	        {
-	            name: '第一学历',
-	            type: 'pie',
-	            selectedMode: 'single',
-	            radius: [0, '30%'],
-	            label: {
-	                position: 'inner',
-	                fontSize: 14,
-	            },
-	            labelLine: {
-	                show: false
-	            },
-	            data: [
-	                {value: 548, name: '硕士研究生'},
-	                {value: 2775, name: '大学本科'},
-	                {value: 979, name: '大学专科'},
-	                {value: 127, name: '中等专科'},
-	                {value: 679, name: '其它'}
-	            ]
-	        },
-	        {
-	            name: '最高学历',
-	            type: 'pie',
-	            radius: ['45%', '60%'],
-	            labelLine: {
-	                length: 15,
-	            },
-	            label: {
-	                formatter: '{b}:{d}%}  ',
-	                borderWidth: 1,
-	                borderRadius: 4,
-					fontSize:16
-	            },
-	            data: [
-	                {value: 698, name: '硕士研究生'},
-	                {value: 2875, name: '大学本科'},
-	                {value: 1089, name: '大学专科'},
-	                {value: 127, name: '中等专科'},
-	                {value: 679, name: '其它'}
-	            ]
-	        },{
-	            name: '院校类别',
-	            type: 'pie',
-	            radius: ['65%', '80%'],
-	            labelLine: {
-	                length: 30,
-	            },
-	            label: {
-	                formatter: '{b}:{d}%}  ',
-	                borderWidth: 1,
-	                borderRadius: 2,
-					fontWeight:'bold',
-					fontSize:16
-	            },
-	            data: [
-	                {value: 478, name: '985'},
-	                {value: 909, name: '211'},
-	                {value: 4178, name: '其它'}
-	            ]
-	        },
-	    ]
+		legend: {
+		    left: 'center',
+			top:'6%',
+		    textStyle:{
+		        fontSize:14
+		    }
+		},
+		series: [{
+		    name:'第一学历统计',
+		    type: 'pie',
+		    radius: '50%',
+		    center: ['50%', '50%'],
+		    data: firstEdu,
+		    label: {
+		        position: 'outer',
+		        bleedMargin: 5,
+		        formatter: '{b}：{d}% ',
+		        fontSize:14
+		    },
+		    left: 0,
+		    right: '66.6667%',
+		    top: 0,
+		    bottom: 0
+		}, {
+		    name:'最高学历统计',
+		    type: 'pie',
+		    radius: '50%',
+		    center: ['50%', '50%'],
+		    data: highEdu,
+		    label: {
+		        position: 'outer',
+		        bleedMargin: 5,
+		        formatter: '{b}：{d}% ',
+		        fontSize:14
+		    },
+		    left: '33.3333%',
+		    right: '33.3333%',
+		    top: 0,
+		    bottom: 0
+		}, {
+		    name:'院校类别统计',
+		    type: 'pie',
+		    radius: '50%',
+		    center: ['50%', '50%'],
+		    data: schoolCategory,
+		    label: {
+		        position: 'outer',
+		        margin: 20,
+		        formatter: '{b}：{d}% ',
+		        fontSize:14
+		    },
+		    left: '66.6667%',
+		    right: 0,
+		    top: 0,
+		    bottom: 0
+		}]
 	};
 	
 	edu_option && myChart.setOption(edu_option);
@@ -417,7 +491,7 @@ layui.use('laydate', function(){
 	
 	personnel_allocation_option = {
 	    title: {
-	        text: '全周期人员配置情况'
+	        text: '全周期人员配置曲线'
 	    },
 	    tooltip: {
 	        trigger: 'axis'
@@ -1355,7 +1429,7 @@ layui.use('laydate', function(){
 	var chartDom = document.getElementById('talnet_sudoku_container');
 	var myChart = echarts.init(chartDom);
 	var formatUtil = echarts.format;
-	var modalData = [
+	var modalData =[
 	    {
 	        value: 14,
 	        name: '公司领导班子',
@@ -1441,6 +1515,92 @@ layui.use('laydate', function(){
 			}
 	    }
 	];
+	//  [
+	//     {
+	//         value: 9,
+	//         name: '总助级',
+	//         label: {
+	//             rich: {
+	//                 height: 50,
+	//             },
+	//         }
+	//     },
+	//     {
+	//         value: 69,
+	//         name: '部门正副职、M7人员',
+	//         label: {
+	// 		   rich: {
+	// 			   height: 50,
+	// 		   },
+	//          }
+	//      },{
+	//         value: 26,
+	//         name: '分公司班子',
+	//         label: {
+	// 			rich: {
+	// 					height: 40,
+	// 				}
+	// 		},
+	//     },
+	//     {
+	//         value: 17,
+	//         name: '大项目经理',
+	//         label: {
+	// 			rich: {
+	// 				height: 50,
+	// 			},
+	// 			height: 48,
+	// 		}
+	//     },
+	// 	{
+	// 	    value: 202,
+	// 	    name: '项目经理',
+	// 	    label: {
+	// 			rich: {
+	// 				img: {
+	// 					height: 50,
+	// 				},
+	// 				height: 55,
+	// 			}
+	// 		}
+	// 	},
+	//     {
+	//         value: 683	,
+	//         name: '项目核心担当体',
+	//         label: {
+	// 			rich: {
+	// 				img: {
+	// 					height: 50,
+	// 				},
+	// 				height: 55,
+	// 			}
+	// 		}
+	//     },
+	//     {
+	//         value: 56,
+	//         name: '两级总部一般员工',
+	//         label: {
+	//             rich: {
+	//                 img: {
+	//                     height: 50,
+	//                 },
+	//                 height: 47,
+	//             },
+	// 		}
+	//     },
+	//     {
+	//         value: 3054,
+	//         name: '项目部一般员工',
+	//         label: {
+	// 			rich: {
+	// 				img: {
+	// 					height: 50,
+	// 				},
+	// 				height: 55,
+	// 			},
+	// 		}
+	//     }
+	// ];
 	function getLevelOption() {
 	    return [
 	        {
@@ -1524,8 +1684,8 @@ layui.use('laydate', function(){
 	
 	var modelData = [
 		{"deptName":"办公室","semester_score":82,"year_score":92},
-		{"deptName":"人力资源部","semester_score":88,"year_score":80},
-		{"deptName":"党群工作部","semester_score":77,"year_score":94},
+		{"deptName":"人力资源部","semester_score":88,"year_score":89},
+		{"deptName":"党群工作部","semester_score":80,"year_score":94},
 		{"deptName":"纪检监督工作部","semester_score":84,"year_score":91},
 		{"deptName":"审计部","semester_score":65,"year_score":77},
 		{"deptName":"综合服务中心","semester_score":84,"year_score":85},
@@ -1911,7 +2071,6 @@ layui.use('laydate', function(){
 	rank_sequence_option && myChart.setOption(rank_sequence_option);
 	// 人员职级序列分析
 	// 各层级人员数据
-	// 
 	var chartDom = document.getElementById('level_personalNums_container');
 	var myChart = echarts.init(chartDom);
 	var level_personalNums_option;
@@ -2139,7 +2298,7 @@ layui.use('laydate', function(){
 			formatter: '{a} <br/>{b}: {c} ({d}%)'
 	    },
 	    series: [{
-	        name:'人数',
+	        name:'一公司项目经理持证率',
 	        type: 'pie',
 	        radius: '50%',
 	        center: ['50%', '50%'],
@@ -2156,7 +2315,7 @@ layui.use('laydate', function(){
 	        top: 0,
 	        bottom: 0
 	    }, {
-			name:'人数',
+			name:'建设发展公司项目经理持证率',
 	        type: 'pie',
 	        radius: '50%',
 	        center: ['50%', '50%'],
@@ -2173,7 +2332,7 @@ layui.use('laydate', function(){
 	        top: 0,
 	        bottom: 0
 	    }, {
-			name:'人数',
+			name:'八局一公司项目经理持证率',
 	        type: 'pie',
 	        radius: '50%',
 	        center: ['50%', '50%'],
@@ -2334,7 +2493,6 @@ layui.use('laydate', function(){
 	        data: zsygdata,
 	        label: {
 	            position: 'outer',
-	            alignTo: 'edge',
 	            margin: 20,
 	            formatter: '{b}：{d}% ',
 		        fontSize:14
@@ -2356,7 +2514,7 @@ layui.use('laydate', function(){
 	PM_performance_option = {
 	
 	    title: {
-	        text: '业绩情况',
+	        text: '项目经理业绩情况',
 	        left: 'left',
 	        top: 20,
 	        left:40
@@ -2370,16 +2528,18 @@ layui.use('laydate', function(){
 	    },
 	    series: [
 	        {
-	            name: '人数',
+	            name: '',
 	            type: 'pie',
 	            radius: '55%',
 	            center: ['50%', '50%'],
 	            data: [
-	                {value: 25, name: '超盈利3%以上'},
-	                {value: 10, name: '亏损'}
+	                {value: 25, name: '项目超盈利3%以上人数'},
+	                {value: 10, name: '项目亏损人数'}
 	            ],
 	            label: {
-	                color: 'black'
+	                position: 'outer',
+	                formatter: '{b}：{c}% ',
+	                fontSize:14
 	            },
 	            labelLine: {
 	                lineStyle: {
@@ -2481,7 +2641,7 @@ layui.use('laydate', function(){
 	            },
 	            itemStyle: {
 	             	normal: {
-	                	color: '#FF7070'
+	                	color: '#9edf7f'
 	            	}
 	        	},
 	        },
@@ -2936,9 +3096,9 @@ layui.use('laydate', function(){
 	var myChart = echarts.init(chartDom);
 	var contract_analyse_option;
 	
-	var fixed_term_data = [198,8, 202, 139, 217, 376, 253,237,233,14];
-		var non_fixed_term_data = [33,1, 2, 13, 17, 36, 4,5,12,0];
-		var hire_agreement_data = [19,9, 24, 8, 14, 6, 24,19,0,0];
+	var fixed_term_data = [198,8, 202, 139, 217, 376, 253,237,233,123,14];
+		var non_fixed_term_data = [33,1, 2, 13, 17, 36, 4,5,12,24,3];
+		var hire_agreement_data = [19,9, 24, 8, 14, 6, 24,19,3,17,2];
 		
 		var total_emps = function(){
 			var totals = [];
